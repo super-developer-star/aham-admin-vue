@@ -62,6 +62,7 @@ export default {
       {
         icon: 'inbox',
         text: 'Manage Content',
+        model: true,
         children: [
           { icon: 'assignment', text: 'Catalogue', link: 'catalogue' }
         ]

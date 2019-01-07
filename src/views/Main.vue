@@ -1,10 +1,10 @@
 <template>
-  <p>Welcome to Dashboard page!</p>
+  <router-view/>
 </template>
 
 <script>
 export default {
-  name: 'Dashboard'
+  name: 'Main'
 }
 </script>
 
