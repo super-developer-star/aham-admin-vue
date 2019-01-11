@@ -1,6 +1,9 @@
 <template>
   <v-card class="pa-4">
-    <DraggableTree class="tree" :data="treeData" draggable ref="tree" @drag="onDrag" @drop="onDrop">
+    <v-card-text class="pa-0">
+      <v-btn class="primary" @click="click('create category', treeData)">New Category</v-btn>
+    </v-card-text>
+    <DraggableTree class="tree pt-4" :data="treeData" draggable @drag="onDrag" @change="onDrop">
       <div slot-scope="{data, store}">
         <template v-if="!data.isDragPlaceHolder">
           <v-icon v-if="data.children && data.children.length" @click="store.toggleOpen(data)">
@@ -12,62 +15,71 @@
                 'tree-subject': data._vm.level === 2,
                  'tree-sub-category': data._vm.level === 3,
                   'tree-topic': data._vm.level === 4}">
-            {{data.name}} - {{data.draggable}}
+            {{data.name}}
           </div>
-          <v-icon class="right">add</v-icon>
-          <v-icon class="right">edit</v-icon>
-          <v-icon class="text-xs-right">delete</v-icon>
+          <v-btn icon small v-if="data._vm.level < 4" @click="click('create', data)">
+            <v-icon>add</v-icon>
+          </v-btn>
+          <v-btn icon small @click="click('edit', data)">
+            <v-icon>edit</v-icon>
+          </v-btn>
+          <v-btn icon small @click="deleteNode(store, data)">
+            <v-icon>delete</v-icon>
+          </v-btn>
         </template>
       </div>
     </DraggableTree>
+
+    <v-dialog v-model="dialog" width="500">
+      <catalogue-modal
+        :item="item"
+        :type="type"
+        :isShow="dialog"
+        @close="dialog = false"
+        @create="create"
+        @save="save"/>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import { DraggableTree } from 'vue-draggable-nested-tree'
 import * as th from 'tree-helper'
+import CatalogueModal from '../../components/Modal/CatalogueModal'
 
 export default {
   name: 'Catalogue',
-  components: { DraggableTree },
+  components: { CatalogueModal, DraggableTree },
   data: () => ({
     treeData: [{
       name: 'Science',
-      hasChild: true,
       children: [
         {
           name: 'Physics',
-          hasChild: true,
           children: [
             {
               name: 'Linear Motion 1',
-              hasChild: true,
               children: [
                 {
-                  name: 'motion',
-                  hasChild: false
+                  name: 'motion'
                 },
                 {
-                  name: 'SUB-CATEGORY',
-                  hasChild: false
+                  name: 'sub'
                 }]
             },
-            { name: 'Linear motion 2', hasChild: false },
-            { name: 'Linear motion 3', hasChild: false }
+            { name: 'Linear motion 2' },
+            { name: 'Linear motion 3' }
           ]
         },
-        { name: 'Chemistry', hasChild: false },
-        { name: 'Physical Science', hasChild: false },
-        { name: 'Biology', hasChild: false },
-        { name: 'Anatomy', hasChild: false },
-        { name: 'Physiology', hasChild: false },
-        { name: 'Zoology', hasChild: false },
-        { name: 'Science', hasChild: false },
-        { name: 'Physics - Intermediate', hasChild: false },
-        { name: 'Biology', hasChild: false }
+        { name: 'Chemistry' },
+        { name: 'Physical Science' }
       ]
-    }, { name: 'Biology', hasChild: false }],
-    maxLevel: 4
+    }, { name: 'Biology' }],
+    maxLevel: 4,
+    dialog: false,
+    item: null,
+    type: 'create',
+    selected: null
   }),
   mounted () {
     this.setTree(this.treeData)
@@ -78,11 +90,30 @@ export default {
         this.$set(childNode, 'draggable', childNode._vm.level > 2)
       })
     },
-    addChild (item) {
-      this.treeData[0].children.push({ text: 'child' })
+    click (type, item) {
+      this.type = type
+      if (type === 'create' || type === 'create category') this.item = {}
+      else this.item = item
+      this.dialog = true
+      this.selected = item
     },
-    deleteChild (item) {
-      this.treeData[0].children.push({ text: 'child' })
+    create (val, isCategory) {
+      const that = this
+      if (isCategory) {
+        this.selected.push({ name: val })
+      } else {
+        this.selected.children.push({ name: val })
+      }
+
+      this.dialog = false
+      setTimeout(() => (that.setTree(that.treeData)), 50)
+    },
+    save (val) {
+      this.selected.name = val
+      this.dialog = false
+    },
+    deleteNode (store, item) {
+      store.deleteNode(item)
     },
     onDrag (node) {
       let nodeLevels = 1
@@ -92,7 +123,6 @@ export default {
         }
       })
       nodeLevels = nodeLevels - node._vm.level + 1
-      console.log(nodeLevels)
       const childNodeMaxLevel = this.maxLevel - nodeLevels
 
       th.depthFirstSearch(this.treeData, (childNode) => {
@@ -100,8 +130,8 @@ export default {
       })
     },
     onDrop (node) {
-      console.log(node._vm.level)
-      // this.$set(node, 'draggable', node._vm.level > 2)
+      const that = this
+      setTimeout(() => (that.$set(node, 'draggable', node._vm.level > 2)), 50)
     }
   }
 }
@@ -141,10 +171,12 @@ export default {
 
   .tree-category {
     color: red;
+    cursor: default;
   }
 
   .tree-subject {
     color: blue;
+    cursor: default;
   }
 
   .tree-sub-category {
@@ -153,6 +185,10 @@ export default {
 
   .tree-topic {
     color: seagreen;
+  }
+
+  .v-icon {
+    color: rgba(0, 0, 0, .54) !important;
   }
 }
 </style>

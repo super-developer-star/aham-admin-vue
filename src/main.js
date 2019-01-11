@@ -6,7 +6,11 @@ import store from './store'
 
 import 'vuetify/dist/vuetify.min.css'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#006598'
+  }
+})
 Vue.config.productionTip = false
 
 window.localMode = true
