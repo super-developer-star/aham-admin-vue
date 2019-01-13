@@ -22,6 +22,7 @@ export default {
   components: { Navigation, ToolBar },
   data: () => ({
     snackbar: false,
+    status: null,
     text: null
   }),
   mounted () {

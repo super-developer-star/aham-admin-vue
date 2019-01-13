@@ -56,7 +56,14 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { icon: 'people', text: 'Manage People', link: 'manage-people' },
+      {
+        icon: 'people',
+        text: 'Manage People',
+        model: true,
+        children: [
+          { icon: 'supervised_user_circle', text: 'Learners', link: 'learners' }
+        ]
+      },
       { icon: 'attach_money', text: 'Manage Money', link: 'manage-money' },
       { icon: 'location_on', text: 'Manage Locations', link: 'manage-locations' },
       {
