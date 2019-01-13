@@ -23,7 +23,7 @@
           <v-btn icon small @click="click('edit', data)">
             <v-icon>edit</v-icon>
           </v-btn>
-          <v-btn icon small @click="deleteNode(store, data)">
+          <v-btn icon small @click="confirmDelete(store, data)">
             <v-icon>delete</v-icon>
           </v-btn>
         </template>
@@ -39,6 +39,11 @@
         @create="create"
         @save="save"/>
     </v-dialog>
+    <v-dialog v-model="isDeleteDialog" width="500">
+      <delete-confirm-modal
+        @close="isDeleteDialog = false"
+        @agree="deleteNode"/>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -46,10 +51,11 @@
 import { DraggableTree } from 'vue-draggable-nested-tree'
 import * as th from 'tree-helper'
 import CatalogueModal from '../../components/Modal/CatalogueModal'
+import DeleteConfirmModal from '../../components/Modal/DeleteConfirmModal'
 
 export default {
   name: 'Catalogue',
-  components: { CatalogueModal, DraggableTree },
+  components: { DeleteConfirmModal, CatalogueModal, DraggableTree },
   data: () => ({
     treeData: [{
       name: 'Science',
@@ -79,7 +85,9 @@ export default {
     dialog: false,
     item: null,
     type: 'create',
-    selected: null
+    selected: null,
+    isDeleteDialog: false,
+    store: null
   }),
   mounted () {
     this.setTree(this.treeData)
@@ -106,14 +114,25 @@ export default {
       }
 
       this.dialog = false
-      setTimeout(() => (that.setTree(that.treeData)), 50)
+      setTimeout(() => {
+        that.setTree(that.treeData)
+        that.$root.$emit('snackbar', 'success', 'Created!')
+      }, 50)
     },
     save (val) {
       this.selected.name = val
       this.dialog = false
+      this.$root.$emit('snackbar', 'success', 'Edited!')
     },
-    deleteNode (store, item) {
-      store.deleteNode(item)
+    confirmDelete (store, item) {
+      this.isDeleteDialog = true
+      this.selected = item
+      this.store = store
+    },
+    deleteNode () {
+      this.store.deleteNode(this.selected)
+      this.isDeleteDialog = false
+      this.$root.$emit('snackbar', 'success', 'Deleted!')
     },
     onDrag (node) {
       let nodeLevels = 1
@@ -177,14 +196,18 @@ export default {
   .tree-subject {
     color: blue;
     cursor: default;
+    font-family: fantasy;
   }
 
   .tree-sub-category {
     color: darkmagenta;
+    font-family: cursive;
   }
 
   .tree-topic {
     color: seagreen;
+    font-family: sans-serif;
+    font-style: italic;
   }
 
   .v-icon {
