@@ -1,18 +1,17 @@
 <template>
   <div>
     <v-layout wrap row justify-center>
-      <v-flex xs4>
+      <v-flex xs3>
         <v-autocomplete v-model="location" :items="locations" item-text="name"
                         item-value="name" menu-props="auto" label="Select Location" hide-details
                         clearable single-line></v-autocomplete>
       </v-flex>
-      <v-flex xs4>
+      <v-flex xs3>
         <v-text-field v-model="searchString" placeholder="Search by name or email..."></v-text-field>
       </v-flex>
       <v-flex align-self-center>
-        <v-btn color="primary">
+        <v-btn icon>
           <v-icon>search</v-icon>
-          Search
         </v-btn>
       </v-flex>
       <v-flex align-self-center>
@@ -21,77 +20,13 @@
       <v-flex align-self-center>
         <v-checkbox v-model="isAll" label="All" color="primary"></v-checkbox>
       </v-flex>
-    </v-layout>
-
-    <v-layout row wrap>
-      <v-flex xs12 sm4 v-for="(learner, i) in learners.data" :key="i">
-        <v-card height="100%">
-          <v-card-title class="pr-0">
-            <span class="headline">{{learner.name}}</span>
-            <v-spacer></v-spacer>
-            <v-menu offset-y bottom left>
-              <v-btn slot="activator" icon>
-                <v-icon>more_vert</v-icon>
-              </v-btn>
-
-              <v-list>
-                <v-list-tile @click="edit(learner)">
-                  <v-list-tile-title>Edit</v-list-tile-title>
-                </v-list-tile>
-              </v-list>
-            </v-menu>
-          </v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <v-layout row wrap>
-              <v-flex shrink align-self-center>
-                <v-img :src="learner.avatar" width="40px" height="40px" contain></v-img>
-              </v-flex>
-              <v-flex grow align-self-center>
-                <p class="subheading font-weight-bold mb-0">{{learner.name}}</p>
-                <span>{{learner.email}}</span>
-              </v-flex>
-            </v-layout>
-          </v-card-text>
-          <v-card-text class="pt-0">
-            <v-layout row wrap>
-              <v-flex shrink align-self-center>
-                <v-icon>event_available</v-icon>
-              </v-flex>
-              <v-flex align-self-center>
-                <p class="my-0">{{learner.since}}</p>
-              </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-              <v-flex shrink align-self-center>
-                <v-icon>location_searching</v-icon>
-              </v-flex>
-              <v-flex align-self-center>
-                <p class="my-0">Home Location(s):</p>
-                <p class="my-0" v-for="(location, k) in learner.preferred_locations" :key="k">{{location.name}}</p>
-              </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-              <v-flex shrink align-self-center>
-                <v-icon>location_on</v-icon>
-              </v-flex>
-              <v-flex align-self-center>
-                <p class="my-0">Country: {{learner.country.name}}</p>
-              </v-flex>
-            </v-layout>
-            <v-layout row wrap>
-              <v-flex shrink align-self-center>
-                <v-icon>done_outline</v-icon>
-              </v-flex>
-              <v-flex align-self-center>
-                <span class="py-1 px-2 active white--text"
-                      v-bind:class="{'activated': learner.active === 'yes', 'inactivated': learner.active !== 'yes'}">active: {{learner.active}}</span>
-              </v-flex>
-            </v-layout>
-          </v-card-text>
-        </v-card>
+      <v-flex align-self-center>
+        <v-switch v-model="isCardType" v-bind:label="getLabel" color="primary"></v-switch>
       </v-flex>
     </v-layout>
+
+    <LearnersCardView :learners="learners" v-if="isCardType" @edit="edit"></LearnersCardView>
+    <LearnersTableView :learners="learners" v-else @edit="edit"></LearnersTableView>
 
     <v-dialog v-model="dialog" width="500">
       <LearnerModal
@@ -104,23 +39,52 @@
 </template>
 
 <script>
-import LearnerModal from '../../components/Modal/LearnerModal'
+import LearnerModal from '../../../components/Modal/LearnerModal'
+import LearnersCardView from './LearnersCardView'
+import LearnersTableView from './LearnersTableView'
+
 export default {
   name: 'Learners',
-  components: { LearnerModal },
+  components: { LearnersTableView, LearnersCardView, LearnerModal },
   data: () => ({
+    isCardType: false,
     learners: {
       'data': [{
         'id': 492,
         'active': 'yes',
         'name': 'Sohan Reddy',
         'email': 'sohanreddyg@gmail.com',
-        'since': '13 Jan 2019',
+        'since': 1547323200000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
           'id': 2,
           'name': 'Aham Learning Hub @ Gachibowli',
+          'slug': 'aham-learning-hubatgachibowli',
+          'code': 'ALH0000001',
+          'street_address': 'Synergy Building, 3rd Floor, Plot No: 6-11, Survey No. 40, Above Andhra Bank, Khajaguda,  Naga Hills Rd, Madhura Nagar Colony, Gachibowli, Hyderabad',
+          'landmark': 'Synergy Building, Andhra Bank, Near Delhi Public School',
+          'city_id': 1,
+          'country_id': 1,
+          'pincode': 500008,
+          'latitude': 17.419,
+          'longitude': 78.375,
+          'deleted_at': null,
+          'created_at': '2016-09-08 21:38:51',
+          'updated_at': '2019-01-12 14:20:29',
+          'locality_id': 2,
+          'active': 1,
+          'currency_type': 'INR',
+          'credits_type': 'global',
+          'repeat_class': 0,
+          'color': '#E9B2D3',
+          'frontend_slug': 'aham-gachibowli',
+          'type': 'aham_learning_hub',
+          'tutor_id': null,
+          'pivot': { 'student_id': 492, 'location_id': 2 }
+        }, {
+          'id': 3,
+          'name': 'Aham Learning Hub @ Kukatpally',
           'slug': 'aham-learning-hubatgachibowli',
           'code': 'ALH0000001',
           'street_address': 'Synergy Building, 3rd Floor, Plot No: 6-11, Survey No. 40, Above Andhra Bank, Khajaguda,  Naga Hills Rd, Madhura Nagar Colony, Gachibowli, Hyderabad',
@@ -212,7 +176,7 @@ export default {
         'active': 'yes',
         'name': 'Siddharth Tripurani',
         'email': 'sidboss03@gmail.com',
-        'since': '13 Jan 2019',
+        'since': 1547323200000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -309,7 +273,7 @@ export default {
         'active': 'yes',
         'name': 'Sristhuthi',
         'email': 'kcsristhuthi@gmail.com',
-        'since': '31 Dec 2018',
+        'since': 1546200000000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -406,7 +370,7 @@ export default {
         'active': 'yes',
         'name': 'Takalla Vikranth',
         'email': 'temporaryemail@abcd.com',
-        'since': '22 Dec 2018',
+        'since': 1545422400000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -503,7 +467,7 @@ export default {
         'active': 'yes',
         'name': 'sai chandan k',
         'email': 'konreddysai@gmail.com',
-        'since': '22 Dec 2018',
+        'since': 1545422400000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -600,7 +564,7 @@ export default {
         'active': 'yes',
         'name': 'Rushil Sureen',
         'email': 'kirtisureen@yahoo.co.in',
-        'since': '16 Dec 2018',
+        'since': 1544904000000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -697,7 +661,7 @@ export default {
         'active': 'yes',
         'name': 'parthavi reddy',
         'email': 'parthavireddy29@gmail.com',
-        'since': '11 Dec 2018',
+        'since': 1544472000000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -842,9 +806,9 @@ export default {
       }, {
         'id': 484,
         'active': 'yes',
-        'name': 'Lava Premal Reddy Panta',
+        'name': 'Lava Panta',
         'email': 'alekyap@yahoo.com',
-        'since': '08 Dec 2018',
+        'since': 1544212800000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -941,7 +905,7 @@ export default {
         'active': 'yes',
         'name': 'Nimish Ray',
         'email': 'ray.nimish@gmail.com',
-        'since': '04 Dec 2018',
+        'since': 1543867200000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1038,7 +1002,7 @@ export default {
         'active': 'yes',
         'name': 'Akhil Gadde',
         'email': 'akhilgadde99@gmail.com',
-        'since': '04 Dec 2018',
+        'since': 1543867200000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1133,9 +1097,9 @@ export default {
       }, {
         'id': 481,
         'active': 'yes',
-        'name': 'Neeraj Praneeth Gajula',
+        'name': 'Neeraj Gajula',
         'email': 'npgajula@gmail.com',
-        'since': '02 Dec 2018',
+        'since': 1542398400000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1232,7 +1196,7 @@ export default {
         'active': 'yes',
         'name': 'kathyayini thota',
         'email': 'kathyayinithota@gmail.com',
-        'since': '26 Nov 2018',
+        'since': 1543176000000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1329,7 +1293,7 @@ export default {
         'active': 'yes',
         'name': 'Sodum Aarav Reddy',
         'email': 'Deepika.chalasani@gmail.com',
-        'since': '24 Nov 2018',
+        'since': 1542398400000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1426,7 +1390,7 @@ export default {
         'active': 'yes',
         'name': 'Chetan Dasari',
         'email': 'chetandasari28@gmail.com',
-        'since': '18 Nov 2018',
+        'since': 1543003200000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1521,9 +1485,9 @@ export default {
       }, {
         'id': 477,
         'active': 'yes',
-        'name': 'PRANITH BOLLAMPALLY',
-        'email': 'harini.bollampally@gmail.com',
-        'since': '17 Nov 2018',
+        'name': 'PRANITH BOALLY',
+        'email': 'harini.boally@gmail.com',
+        'since': 1542484800000,
         'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
         'lifetime': null,
         'preferred_locations': [{
@@ -1579,466 +1543,6 @@ export default {
           'why_teacher': null,
           'grade': '5-8',
           'what_learn': 'SSAT ENGLISH SYLLABUS UPTO FEBRUARY 1st 2019',
-          'public_profile': null,
-          'description': null,
-          'gender': null,
-          'birthday': null,
-          'Aadhar_card': null,
-          'pan_card': null,
-          'form_16': null,
-          'cheque': null,
-          'school': null,
-          'country_id': 1,
-          'picture': null,
-          'country': {
-            'id': 1,
-            'name': 'India',
-            'slug': 'india',
-            'code': 'IN',
-            'deleted_at': null,
-            'created_at': '2018-12-17 15:00:26',
-            'updated_at': '2019-01-12 12:57:03',
-            'currency': 'INR',
-            'current_price_per_credit': 1100,
-            'status': 1
-          }
-        },
-        'country': {
-          'id': 1,
-          'name': 'India',
-          'slug': 'india',
-          'code': 'IN',
-          'deleted_at': null,
-          'created_at': '2018-12-17 15:00:26',
-          'updated_at': '2019-01-12 12:57:03',
-          'currency': 'INR',
-          'current_price_per_credit': 1100,
-          'status': 1
-        }
-      }, {
-        'id': 476,
-        'active': 'yes',
-        'name': 'sri samhitha',
-        'email': 'tpschowdary@gmail.com',
-        'since': '16 Nov 2018',
-        'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
-        'lifetime': null,
-        'preferred_locations': [{
-          'id': 7,
-          'name': 'Aham Learning Hub @ Kukatpally',
-          'slug': 'ahamlearninghubatkukatpally',
-          'code': 'ALH0000004',
-          'street_address': 'Above Pista House, Near JNTU Metro Station, Kukatpally, Hyderabad.',
-          'landmark': 'Above Pista House',
-          'city_id': 1,
-          'country_id': 1,
-          'pincode': 500072,
-          'latitude': 0,
-          'longitude': 0,
-          'deleted_at': null,
-          'created_at': '2018-07-05 12:40:38',
-          'updated_at': '2019-01-12 14:20:13',
-          'locality_id': 5,
-          'active': 1,
-          'currency_type': 'INR',
-          'credits_type': 'global',
-          'repeat_class': 1,
-          'color': '#fffaff',
-          'frontend_slug': 'aham-kukatpally',
-          'type': 'aham_learning_hub',
-          'tutor_id': null,
-          'pivot': { 'student_id': 476, 'location_id': 7 }
-        }],
-        'code': 'STS0000083',
-        'joined_on': '16th Nov 2018',
-        'credits': 1,
-        'user': {
-          'id': 1117,
-          'email': 'tpschowdary@gmail.com',
-          'permissions': [],
-          'last_login': null,
-          'created_at': '2018-11-16 14:52:13',
-          'updated_at': '2018-11-18 12:27:36',
-          'deleted_at': null,
-          'name': 'sri samhitha',
-          'username': 'srisamhitha',
-          'who_are_you': 'user',
-          'interested_in': 'student',
-          'photo': null,
-          'locality_id': null,
-          'city_id': 1,
-          'mobile': null,
-          'interested_subjects': null,
-          'interested_subcategories': null,
-          'linkedin': null,
-          'resume_file': null,
-          'current_profession': null,
-          'why_teacher': null,
-          'grade': '9-12',
-          'what_learn': null,
-          'public_profile': null,
-          'description': null,
-          'gender': null,
-          'birthday': null,
-          'Aadhar_card': null,
-          'pan_card': null,
-          'form_16': null,
-          'cheque': null,
-          'school': null,
-          'country_id': 1,
-          'picture': null,
-          'country': {
-            'id': 1,
-            'name': 'India',
-            'slug': 'india',
-            'code': 'IN',
-            'deleted_at': null,
-            'created_at': '2018-12-17 15:00:26',
-            'updated_at': '2019-01-12 12:57:03',
-            'currency': 'INR',
-            'current_price_per_credit': 1100,
-            'status': 1
-          }
-        },
-        'country': {
-          'id': 1,
-          'name': 'India',
-          'slug': 'india',
-          'code': 'IN',
-          'deleted_at': null,
-          'created_at': '2018-12-17 15:00:26',
-          'updated_at': '2019-01-12 12:57:03',
-          'currency': 'INR',
-          'current_price_per_credit': 1100,
-          'status': 1
-        }
-      }, {
-        'id': 475,
-        'active': 'yes',
-        'name': 'Dennis',
-        'email': 'denissaden@outlook.com',
-        'since': '12 Nov 2018',
-        'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
-        'lifetime': null,
-        'preferred_locations': [],
-        'code': 'STD0000011',
-        'joined_on': '12th Nov 2018',
-        'credits': 0,
-        'user': {
-          'id': 1109,
-          'email': 'denissaden@outlook.com',
-          'permissions': [],
-          'last_login': '2019-01-04 11:53:46',
-          'created_at': '2018-11-11 13:50:16',
-          'updated_at': '2019-01-04 11:53:46',
-          'deleted_at': null,
-          'name': 'Dennis',
-          'username': 'dennis',
-          'who_are_you': 'user',
-          'interested_in': 'student',
-          'photo': null,
-          'locality_id': null,
-          'city_id': 1,
-          'mobile': null,
-          'interested_subjects': null,
-          'interested_subcategories': null,
-          'linkedin': null,
-          'resume_file': null,
-          'current_profession': null,
-          'why_teacher': null,
-          'grade': 'Working_Professional',
-          'what_learn': null,
-          'public_profile': null,
-          'description': null,
-          'gender': null,
-          'birthday': null,
-          'Aadhar_card': null,
-          'pan_card': null,
-          'form_16': null,
-          'cheque': null,
-          'school': null,
-          'country_id': 1,
-          'picture': null,
-          'country': {
-            'id': 1,
-            'name': 'India',
-            'slug': 'india',
-            'code': 'IN',
-            'deleted_at': null,
-            'created_at': '2018-12-17 15:00:26',
-            'updated_at': '2019-01-12 12:57:03',
-            'currency': 'INR',
-            'current_price_per_credit': 1100,
-            'status': 1
-          }
-        },
-        'country': {
-          'id': 1,
-          'name': 'India',
-          'slug': 'india',
-          'code': 'IN',
-          'deleted_at': null,
-          'created_at': '2018-12-17 15:00:26',
-          'updated_at': '2019-01-12 12:57:03',
-          'currency': 'INR',
-          'current_price_per_credit': 1100,
-          'status': 1
-        }
-      }, {
-        'id': 474,
-        'active': 'yes',
-        'name': 'Vennela Juluri',
-        'email': 'jmadhulata@gmail.com',
-        'since': '10 Nov 2018',
-        'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
-        'lifetime': null,
-        'preferred_locations': [{
-          'id': 7,
-          'name': 'Aham Learning Hub @ Kukatpally',
-          'slug': 'ahamlearninghubatkukatpally',
-          'code': 'ALH0000004',
-          'street_address': 'Above Pista House, Near JNTU Metro Station, Kukatpally, Hyderabad.',
-          'landmark': 'Above Pista House',
-          'city_id': 1,
-          'country_id': 1,
-          'pincode': 500072,
-          'latitude': 0,
-          'longitude': 0,
-          'deleted_at': null,
-          'created_at': '2018-07-05 12:40:38',
-          'updated_at': '2019-01-12 14:20:13',
-          'locality_id': 5,
-          'active': 1,
-          'currency_type': 'INR',
-          'credits_type': 'global',
-          'repeat_class': 1,
-          'color': '#fffaff',
-          'frontend_slug': 'aham-kukatpally',
-          'type': 'aham_learning_hub',
-          'tutor_id': null,
-          'pivot': { 'student_id': 474, 'location_id': 7 }
-        }],
-        'code': 'STV0000030',
-        'joined_on': '10th Nov 2018',
-        'credits': 0,
-        'user': {
-          'id': 1107,
-          'email': 'jmadhulata@gmail.com',
-          'permissions': [],
-          'last_login': null,
-          'created_at': '2018-11-10 12:29:19',
-          'updated_at': '2018-11-10 12:29:19',
-          'deleted_at': null,
-          'name': 'Vennela Juluri',
-          'username': 'vennelajuluri',
-          'who_are_you': 'user',
-          'interested_in': 'student',
-          'photo': null,
-          'locality_id': null,
-          'city_id': 1,
-          'mobile': null,
-          'interested_subjects': null,
-          'interested_subcategories': null,
-          'linkedin': null,
-          'resume_file': null,
-          'current_profession': null,
-          'why_teacher': null,
-          'grade': '9-12',
-          'what_learn': '10th Grade \r\nCBSE\r\nScience',
-          'public_profile': null,
-          'description': null,
-          'gender': null,
-          'birthday': null,
-          'Aadhar_card': null,
-          'pan_card': null,
-          'form_16': null,
-          'cheque': null,
-          'school': null,
-          'country_id': 1,
-          'picture': null,
-          'country': {
-            'id': 1,
-            'name': 'India',
-            'slug': 'india',
-            'code': 'IN',
-            'deleted_at': null,
-            'created_at': '2018-12-17 15:00:26',
-            'updated_at': '2019-01-12 12:57:03',
-            'currency': 'INR',
-            'current_price_per_credit': 1100,
-            'status': 1
-          }
-        },
-        'country': {
-          'id': 1,
-          'name': 'India',
-          'slug': 'india',
-          'code': 'IN',
-          'deleted_at': null,
-          'created_at': '2018-12-17 15:00:26',
-          'updated_at': '2019-01-12 12:57:03',
-          'currency': 'INR',
-          'current_price_per_credit': 1100,
-          'status': 1
-        }
-      }, {
-        'id': 473,
-        'active': 'yes',
-        'name': 'jitendra Sharma',
-        'email': 'jksharma2612@gmail.com',
-        'since': '03 Nov 2018',
-        'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
-        'lifetime': null,
-        'preferred_locations': [{
-          'id': 6,
-          'name': 'Aham Learning Hub @ BanjaraHills',
-          'slug': 'ahamatbanjara',
-          'code': 'AHA0000000',
-          'street_address': '8-2-682/B/5, Rd Number 12, Anand Banjara Colony, Banjara Hills, Hyderabad, Telangana 500034',
-          'landmark': 'Opposite to Kaman, Above Kotak Mahindra Bank,',
-          'city_id': 1,
-          'country_id': 1,
-          'pincode': 500034,
-          'latitude': -0.0040000000000000036,
-          'longitude': 0.002,
-          'deleted_at': null,
-          'created_at': '2018-01-21 13:48:36',
-          'updated_at': '2019-01-12 16:09:42',
-          'locality_id': 4,
-          'active': 1,
-          'currency_type': 'INR',
-          'credits_type': 'global',
-          'repeat_class': 0,
-          'color': '#9295CC',
-          'frontend_slug': 'aham-banjara-hills',
-          'type': 'aham_learning_hub',
-          'tutor_id': null,
-          'pivot': { 'student_id': 473, 'location_id': 6 }
-        }],
-        'code': 'STJ0000018',
-        'joined_on': '3rd Nov 2018',
-        'credits': 1,
-        'user': {
-          'id': 1099,
-          'email': 'jksharma2612@gmail.com',
-          'permissions': [],
-          'last_login': null,
-          'created_at': '2018-11-03 14:56:03',
-          'updated_at': '2018-11-03 14:56:03',
-          'deleted_at': null,
-          'name': 'jitendra Sharma',
-          'username': 'jitendrasharma',
-          'who_are_you': 'user',
-          'interested_in': 'student',
-          'photo': null,
-          'locality_id': null,
-          'city_id': 1,
-          'mobile': null,
-          'interested_subjects': null,
-          'interested_subcategories': null,
-          'linkedin': null,
-          'resume_file': null,
-          'current_profession': null,
-          'why_teacher': null,
-          'grade': 'Working_Professional',
-          'what_learn': 'Spoken English',
-          'public_profile': null,
-          'description': null,
-          'gender': null,
-          'birthday': null,
-          'Aadhar_card': null,
-          'pan_card': null,
-          'form_16': null,
-          'cheque': null,
-          'school': null,
-          'country_id': 1,
-          'picture': null,
-          'country': {
-            'id': 1,
-            'name': 'India',
-            'slug': 'india',
-            'code': 'IN',
-            'deleted_at': null,
-            'created_at': '2018-12-17 15:00:26',
-            'updated_at': '2019-01-12 12:57:03',
-            'currency': 'INR',
-            'current_price_per_credit': 1100,
-            'status': 1
-          }
-        },
-        'country': {
-          'id': 1,
-          'name': 'India',
-          'slug': 'india',
-          'code': 'IN',
-          'deleted_at': null,
-          'created_at': '2018-12-17 15:00:26',
-          'updated_at': '2019-01-12 12:57:03',
-          'currency': 'INR',
-          'current_price_per_credit': 1100,
-          'status': 1
-        }
-      }, {
-        'id': 472,
-        'active': 'yes',
-        'name': 'Yuvan Neerati',
-        'email': 'purnima.yellowpoint@gmail.com',
-        'since': '03 Nov 2018',
-        'avatar': 'https://res.cloudinary.com/ahamlearning/image/upload/c_thumb,h_80,w_80/aham_icon_m6ljr5.jpg',
-        'lifetime': null,
-        'preferred_locations': [{
-          'id': 2,
-          'name': 'Aham Learning Hub @ Gachibowli',
-          'slug': 'aham-learning-hubatgachibowli',
-          'code': 'ALH0000001',
-          'street_address': 'Synergy Building, 3rd Floor, Plot No: 6-11, Survey No. 40, Above Andhra Bank, Khajaguda,  Naga Hills Rd, Madhura Nagar Colony, Gachibowli, Hyderabad',
-          'landmark': 'Synergy Building, Andhra Bank, Near Delhi Public School',
-          'city_id': 1,
-          'country_id': 1,
-          'pincode': 500008,
-          'latitude': 17.419,
-          'longitude': 78.375,
-          'deleted_at': null,
-          'created_at': '2016-09-08 21:38:51',
-          'updated_at': '2019-01-12 14:20:29',
-          'locality_id': 2,
-          'active': 1,
-          'currency_type': 'INR',
-          'credits_type': 'global',
-          'repeat_class': 0,
-          'color': '#E9B2D3',
-          'frontend_slug': 'aham-gachibowli',
-          'type': 'aham_learning_hub',
-          'tutor_id': null,
-          'pivot': { 'student_id': 472, 'location_id': 2 }
-        }],
-        'code': 'STY0000005',
-        'joined_on': '3rd Nov 2018',
-        'credits': 0,
-        'user': {
-          'id': 1098,
-          'email': 'purnima.yellowpoint@gmail.com',
-          'permissions': [],
-          'last_login': null,
-          'created_at': '2018-11-03 12:42:48',
-          'updated_at': '2018-11-03 12:42:48',
-          'deleted_at': null,
-          'name': 'Yuvan Neerati',
-          'username': 'yuvanneerati',
-          'who_are_you': 'user',
-          'interested_in': 'student',
-          'photo': null,
-          'locality_id': null,
-          'city_id': 1,
-          'mobile': null,
-          'interested_subjects': null,
-          'interested_subcategories': null,
-          'linkedin': null,
-          'resume_file': null,
-          'current_profession': null,
-          'why_teacher': null,
-          'grade': 'other',
-          'what_learn': 'Robotics',
           'public_profile': null,
           'description': null,
           'gender': null,
@@ -2177,9 +1681,15 @@ export default {
     dialog: false,
     selected: null
   }),
+  computed: {
+    getLabel () {
+      const type = this.isCardType ? 'Card' : 'Table'
+      return 'View Type: ' + type
+    }
+  },
   methods: {
     edit (item) {
-      this.selected = item
+      this.selected = JSON.parse(item)
       this.dialog = true
     },
     save () {
@@ -2192,17 +1702,5 @@ export default {
 <style scoped>
 .layout .flex {
   padding: 8px;
-}
-
-.active {
-  border-radius: 4px;
-}
-
-.activated {
-  background: #34bfa3;
-}
-
-.inactivated {
-  background: #f4516c;
 }
 </style>

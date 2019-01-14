@@ -191,23 +191,27 @@ export default {
   .tree-category {
     color: red;
     cursor: default;
+    font-size: 14px;
   }
 
   .tree-subject {
     color: blue;
     cursor: default;
     font-family: fantasy;
+    font-size: 13px;
   }
 
   .tree-sub-category {
     color: darkmagenta;
     font-family: cursive;
+    font-size: 12px;
   }
 
   .tree-topic {
     color: seagreen;
     font-family: sans-serif;
     font-style: italic;
+    font-size: 11px;
   }
 
   .v-icon {

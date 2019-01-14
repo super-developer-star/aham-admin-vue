@@ -8,7 +8,17 @@
       <v-form ref="form" v-model="form">
         <v-text-field v-model="name" :rules="requiredRules" label="Name *" required></v-text-field>
         <v-autocomplete v-model="country" :items="countries" item-text="name" menu-props="auto" label="Country *"
-                        clearable required></v-autocomplete>
+                        clearable required>
+          <template slot="selection" slot-scope="data">
+            <flag :iso="data.item.code"/>&nbsp;{{ data.item.name }}
+          </template>
+          <template slot="item" slot-scope="data">
+            <v-list-tile-content>
+              <v-list-tile-title><flag :iso="data.item.code"/>&nbsp;{{ data.item.name }}</v-list-tile-title>
+            </v-list-tile-content>
+          </template>
+        </v-autocomplete>
+
         <v-combobox v-model="location" :items="locations" item-text="name" label="Home locations" chips clearable
                     multiple cache-items>
           <template slot="selection" slot-scope="data">
@@ -820,7 +830,7 @@ export default {
     reset () {
       this.name = this.item.name
       this.country = this.item.country.name
-      this.location = this.item.preferred_locations
+      this.location = [...this.item.preferred_locations]
     },
     save () {
       this.$emit('save', this.name)

@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
+import FlagIcon from 'vue-flag-icon'
+import Moment from 'vue-moment'
+
 import App from './App.vue'
 import router from './router/index'
 import store from './store'
@@ -11,6 +14,9 @@ Vue.use(Vuetify, {
     primary: '#006598'
   }
 })
+Vue.use(FlagIcon)
+Vue.use(Moment)
+
 Vue.config.productionTip = false
 
 window.localMode = true

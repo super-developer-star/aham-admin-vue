@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Main from '../views/Main'
 import Dashboard from '../views/Dashboard'
-import Learners from '../views/ManagePeople/Learners'
+import Learners from '../views/ManagePeople/Learners/Main'
 import Catalogue from '../views/ManageContent/Catalogue'
 
 Vue.use(Router)
