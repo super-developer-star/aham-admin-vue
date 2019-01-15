@@ -26,9 +26,9 @@
     </v-layout>
 
     <LearnersCardView :learners="learners" v-if="isCardType" @edit="edit"></LearnersCardView>
-    <LearnersTableView :learners="learners" v-else @edit="edit"></LearnersTableView>
+    <LearnersListView :learners="learners" v-else @edit="edit"></LearnersListView>
 
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="800">
       <LearnerModal
         :item="selected"
         :isShow="dialog"
@@ -41,11 +41,11 @@
 <script>
 import LearnerModal from '../../../components/Modal/LearnerModal'
 import LearnersCardView from './LearnersCardView'
-import LearnersTableView from './LearnersTableView'
+import LearnersListView from './LearnersListView'
 
 export default {
   name: 'Learners',
-  components: { LearnersTableView, LearnersCardView, LearnerModal },
+  components: { LearnersListView, LearnersCardView, LearnerModal },
   data: () => ({
     isCardType: false,
     learners: {
@@ -1683,7 +1683,7 @@ export default {
   }),
   computed: {
     getLabel () {
-      const type = this.isCardType ? 'Card' : 'Table'
+      const type = this.isCardType ? 'Card' : 'List'
       return 'View Type: ' + type
     }
   },

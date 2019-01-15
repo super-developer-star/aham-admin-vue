@@ -65,7 +65,7 @@
 
 <script>
 export default {
-  name: 'LearnersTableView',
+  name: 'LearnersListView',
   props: ['learners'],
   data: () => ({
     headers: [
