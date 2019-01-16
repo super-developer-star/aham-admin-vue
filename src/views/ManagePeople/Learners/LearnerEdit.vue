@@ -4,6 +4,7 @@
       <v-btn icon @click="back">
         <v-icon color="primary">arrow_back</v-icon>
       </v-btn>
+      <div class="subheading">Edit Learner ( {{item.name}} )</div>
     </v-card-title>
 
     <v-tabs dark v-model="active" centered color="primary" slider-color="#f98507" fixed-tabs class="elevation-1">
@@ -14,21 +15,24 @@
       <v-tab-item>
         <LearnerProfile :item="item"></LearnerProfile>
       </v-tab-item>
-      <v-tab-item class="pa-4 pt-0">
-        <LearnerAssessments></LearnerAssessments>
+      <v-tab-item>
+        <LearnerAssessments :item="item"></LearnerAssessments>
       </v-tab-item>
-      <v-tab-item class="pa-4 pt-0">3</v-tab-item>
+      <v-tab-item>
+        <LearnerWishList :item="item"></LearnerWishList>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
 </template>
 
 <script>
-import LearnerAssessments from '../../../components/LearnerAssessments'
-import LearnerProfile from '../../../components/LearnerProfile'
+import LearnerAssessments from '../../../components/LearnersComponets/LearnerAssessments'
+import LearnerProfile from '../../../components/LearnersComponets/LearnerProfile'
+import LearnerWishList from '../../../components/LearnersComponets/LearnerWishList'
 
 export default {
   name: 'LearnerEdit',
-  components: { LearnerProfile, LearnerAssessments },
+  components: { LearnerWishList, LearnerProfile, LearnerAssessments },
   data: () => ({
     active: null,
     tabs: ['Profile', 'Assessments', 'WishList'],
