@@ -84,7 +84,7 @@ export default {
   }),
   methods: {
     edit (item) {
-      this.$emit('edit', JSON.stringify(item))
+      this.$emit('edit', item.id)
     }
   }
 }

@@ -1,14 +1,15 @@
 <template>
   <v-toolbar
-    :clipped-left="$vuetify.breakpoint.lgAndUp"
+    clipped-left
     color="primary"
     dark
     app
     fixed
   >
+
     <v-toolbar-title class="ml-0">
       <v-toolbar-side-icon @click.stop="showNavigation()"></v-toolbar-side-icon>
-      <span class="hidden-sm-and-down">Aham - Administrator Panel</span>
+      <span>Aham - Administrator Panel</span>
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-menu offset-y>

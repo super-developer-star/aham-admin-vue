@@ -3,7 +3,7 @@
     <navigation></navigation>
     <tool-bar/>
     <v-content>
-      <v-container fluid>
+      <v-container fluid style="height: 100%">
         <router-view/>
         <v-snackbar v-model="snackbar" :timeout="2000" :color="status" top right>{{ text }}</v-snackbar>
       </v-container>

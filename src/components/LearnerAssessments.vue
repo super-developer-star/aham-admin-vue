@@ -1,12 +1,13 @@
 <template>
-  <transition name="slide-y-transition">
-    <router-view />
-  </transition>
+  <p>{{name}}</p>
 </template>
 
 <script>
 export default {
-  name: 'Main'
+  name: 'LearnerAssessments',
+  data: () => ({
+    name: 'Assessments'
+  })
 }
 </script>
 

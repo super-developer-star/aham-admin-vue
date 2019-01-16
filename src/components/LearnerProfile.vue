@@ -1,7 +1,18 @@
 <template>
   <v-card-text>
-    <v-form ref="form" v-model="form">
-      <v-text-field v-model="name" :rules="requiredRules" label="Name *" required></v-text-field>
+    <v-form ref="form" v-model="form" class="pa-2">
+      <v-layout row wrap>
+        <v-flex md12 lg6>
+          <v-text-field v-model="name" :rules="requiredRules" label="Name *" required/>
+        </v-flex>
+        <v-flex md12 lg4 offset-lg2>
+          <v-radio-group v-model="isActive" row>
+            <v-radio label="Active" value="yes" color="primary"></v-radio>
+            <v-radio label="Inactive" value="no" color="primary"></v-radio>
+          </v-radio-group>
+        </v-flex>
+      </v-layout>
+
       <v-autocomplete v-model="country" :items="countries" item-text="name" menu-props="auto" label="Country *"
                       clearable required>
         <template slot="selection" slot-scope="data">
@@ -25,19 +36,24 @@
         </template>
       </v-combobox>
     </v-form>
+    <v-card-actions>
+      <v-btn @click="reset">reset</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" @click="save">save</v-btn>
+    </v-card-actions>
   </v-card-text>
 </template>
 
 <script>
 export default {
-  name: 'LearnerProfileForm',
-  date: () => ({
+  name: 'LearnerProfile',
+  props: ['item'],
+  data: () => ({
+    form: false,
     name: '',
     country: null,
-    requiredRules: [
-      v => !!v || 'This field is required'
-    ],
-    form: false,
+    isActive: 'no',
+    requiredRules: [v => !!v || 'This field is required'],
     countries: [
       {
         'id': 1,
@@ -809,14 +825,19 @@ export default {
       { name: 'Aham Learning Hub @ Kukatpally' }
     ]
   }),
+  mounted () {
+    this.reset()
+  },
   methods: {
     reset () {
       this.name = this.item.name
       this.country = this.item.country.name
+      this.isActive = this.item.active
       this.location = [...this.item.preferred_locations]
     },
     save () {
-      this.$emit('save', this.name)
+      // this.$emit('save', this.name)
+      this.$root.$emit('snackbar', 'success', 'Saved!')
     },
     close () {
       this.$emit('close')

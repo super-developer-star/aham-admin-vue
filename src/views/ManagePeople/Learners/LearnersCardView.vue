@@ -76,7 +76,7 @@ export default {
   props: ['learners'],
   methods: {
     edit (item) {
-      this.$emit('edit', JSON.stringify(item))
+      this.$emit('edit', item.id)
     }
   }
 }

@@ -1,7 +1,8 @@
 <template>
   <v-navigation-drawer
-    :clipped="$vuetify.breakpoint.lgAndUp"
+    clipped
     v-model="drawer"
+    permanent
     fixed
     app
   >
@@ -23,7 +24,7 @@
           <v-list-tile
             v-for="(child, i) in item.children"
             :key="i"
-            :to="{path: child.link}"
+            :to="{name: child.link}"
           >
             <v-list-tile-action v-if="child.icon">
               <v-icon class="pl-3">{{ child.icon }}</v-icon>
@@ -35,7 +36,7 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list-group>
-        <v-list-tile v-else :key="item.text" :to="{path: item.link}">
+        <v-list-tile v-else :key="item.text" :to="{name: item.link}">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
@@ -69,7 +70,7 @@ export default {
       {
         icon: 'inbox',
         text: 'Manage Content',
-        model: true,
+        model: false,
         children: [
           { icon: 'assignment', text: 'Catalogue', link: 'catalogue' }
         ]
